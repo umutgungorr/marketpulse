@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketPulse | Akıllı Finans & Varlık İstihbarat Platformu</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-[#0b0f19] text-gray-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Top Headline Ticker Bar -->
+    <header class="bg-[#0f172a] border-b border-gray-800/80 sticky top-0 z-40 backdrop-blur-md">
+        <!-- Live Tickers -->
+        <div class="overflow-x-auto flex items-center border-b border-gray-800/40 px-4 py-0.5 scrollbar-none" id="ticker-bar">
+            <!-- Dynamic ticker items will be injected here -->
+        </div>
+
+        <!-- Main Navbar -->
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-emerald-400 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">
+                    MP
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-tight gradient-title" data-i18n="brand">MarketPulse</h1>
+                    <p class="text-[10px] text-gray-400 font-mono tracking-wide hidden sm:block" data-i18n="tagline">Akıllı Finans, Hisse & Kripto İstihbarat Platformu</p>
+                </div>
+            </div>
+
+            <!-- Right Controls: Language Switcher & Quick Add -->
+            <div class="flex items-center space-x-3">
+                <!-- TR / EN Toggle -->
+                <div class="flex items-center bg-gray-900 border border-gray-800 rounded-lg p-0.5">
+                    <button id="lang-btn-tr" onclick="setLanguage('tr')" class="px-2.5 py-1 rounded bg-blue-600 text-white font-medium text-xs shadow">
+                        🇹🇷 TR
+                    </button>
+                    <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded text-gray-400 hover:text-white text-xs">
+                        🇬🇧 EN
+                    </button>
+                </div>
+
+                <button onclick="openAddPositionModal()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow-lg shadow-emerald-600/20 flex items-center space-x-1.5" data-i18n="addAssetBtn">
+                    <span>+ Varlık Ekle</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+
+        <!-- Search Bar with Strict Mode & Suggestions -->
+        <div class="relative max-w-2xl mx-auto">
+            <div class="relative">
+                <input 
+                    type="text" 
+                    id="main-search-input"
+                    oninput="onSearchInput(this.value)"
+                    placeholder="Hisse veya kripto sembolü ara (örn: THYAO, BTC, ASELS, NVDA)..."
+                    data-i18n="searchPlaceholder"
+                    class="w-full bg-[#111827] border border-gray-700/80 rounded-xl px-4 py-3 pl-11 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-xl transition"
+                    autocomplete="off"
+                />
+                <span class="absolute left-3.5 top-3.5 text-gray-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+            </div>
+
+            <!-- Search Results Dropdown -->
+            <div id="search-results-box" class="absolute left-0 right-0 top-full mt-2 bg-[#111827] border border-gray-700 rounded-xl shadow-2xl z-50 hidden max-h-72 overflow-y-auto">
+                <!-- Search items rendered via app.js -->
+            </div>
+        </div>
+
+        <!-- Segmented Navigation Tabs -->
+        <div class="flex items-center space-x-1 overflow-x-auto pb-1 border-b border-gray-800 scrollbar-none">
+            <button onclick="switchTab('all')" data-tab="all" class="nav-tab tab-active px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-1.5" data-i18n="allAssets">
+                <span>🌐 Tümü</span>
+            </button>
+            <button onclick="switchTab('bist')" data-tab="bist" class="nav-tab text-gray-400 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-1.5" data-i18n="bistAssets">
+                <span>🇹🇷 BIST Hisseleri</span>
+            </button>
+            <button onclick="switchTab('crypto')" data-tab="crypto" class="nav-tab text-gray-400 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-1.5" data-i18n="cryptoAssets">
+                <span>🪙 Kripto Paralar</span>
+            </button>
+            <button onclick="switchTab('global')" data-tab="global" class="nav-tab text-gray-400 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-1.5" data-i18n="globalAssets">
+                <span>🇺🇸 Küresel (US)</span>
+            </button>
+            <button onclick="switchTab('portfolio')" data-tab="portfolio" class="nav-tab text-gray-400 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-1.5" data-i18n="portfolioTab">
+                <span>💼 Portföyüm</span>
+            </button>
+            <button onclick="switchTab('news')" data-tab="news" class="nav-tab text-gray-400 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-1.5" data-i18n="newsTab">
+                <span>📰 Haber & Duygu</span>
+            </button>
+            <button onclick="switchTab('alerts')" data-tab="alerts" class="nav-tab text-gray-400 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-1.5" data-i18n="alertsTab">
+                <span>⏰ Alarmlar</span>
+            </button>
+        </div>
+
+        <!-- Dynamic Main Content Area -->
+        <div id="content-area" class="min-h-[400px]">
+            <!-- Rendered dynamically by app.js -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800/60 bg-[#0a0d14] py-4 text-center text-xs text-gray-500 font-mono">
+        <p>MarketPulse v0.1.0 • BIST, Crypto & Global Intelligence Engine • Zero External Dependencies</p>
+    </footer>
+
+    <!-- MODAL 1: Interactive Chart & Technical Detail Modal -->
+    <div id="chart-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#111827] border border-gray-700 rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-5 border-b border-gray-800 flex items-center justify-between">
+                <div>
+                    <span id="modal-symbol" class="text-xl font-black text-white font-mono">BTC</span>
+                    <span id="modal-title" class="text-xs text-gray-400 ml-2">Bitcoin</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="openCreateAlertModal(state.selectedSymbol)" class="px-2.5 py-1 bg-amber-600/80 hover:bg-amber-600 text-white rounded text-xs font-bold transition">
+                        ⏰ Alarm Kur
+                    </button>
+                    <button onclick="openAddPositionModal(state.selectedSymbol)" class="px-2.5 py-1 bg-emerald-600/80 hover:bg-emerald-600 text-white rounded text-xs font-bold transition">
+                        + Portföye Ekle
+                    </button>
+                    <button onclick="closeChartModal()" class="text-gray-400 hover:text-white text-lg font-bold p-1">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-5 flex-1 overflow-y-auto space-y-4">
+                <!-- Quote & Metrics Header -->
+                <div id="modal-quote-details" class="p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+                    <!-- Injected via app.js -->
+                </div>
+
+                <!-- Timeframe Selectors -->
+                <div class="flex items-center justify-end space-x-1">
+                    <button id="tf-btn-1D" onclick="openChartModal(state.selectedSymbol, '1D')" class="px-3 py-1 bg-gray-800 text-gray-400 hover:text-white rounded text-xs font-bold">1G</button>
+                    <button id="tf-btn-1W" onclick="openChartModal(state.selectedSymbol, '1W')" class="px-3 py-1 bg-gray-800 text-gray-400 hover:text-white rounded text-xs font-bold">1H</button>
+                    <button id="tf-btn-1M" onclick="openChartModal(state.selectedSymbol, '1M')" class="px-3 py-1 bg-blue-600 text-white rounded text-xs font-bold">1A</button>
+                    <button id="tf-btn-1Y" onclick="openChartModal(state.selectedSymbol, '1Y')" class="px-3 py-1 bg-gray-800 text-gray-400 hover:text-white rounded text-xs font-bold">1Y</button>
+                </div>
+
+                <!-- Chart Canvas Container -->
+                <div class="h-64 w-full bg-[#0a0d14] rounded-xl p-2 border border-gray-800 relative">
+                    <canvas id="price-chart-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Add Position Modal -->
+    <div id="add-position-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#111827] border border-gray-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl p-6">
+            <h3 class="text-lg font-bold text-white mb-4" data-i18n="addPositionModalTitle">Portföye Varlık Ekle</h3>
+            <form onsubmit="submitPositionForm(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1" data-i18n="symbol">Sembol</label>
+                    <input type="text" id="pos-symbol" required placeholder="örn: THYAO veya BTC" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500 uppercase font-mono">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1" data-i18n="quantity">Miktar</label>
+                        <input type="number" step="any" id="pos-qty" required placeholder="örn: 50" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1" data-i18n="buyPrice">Alış Fiyatı</label>
+                        <input type="number" step="any" id="pos-price" required placeholder="örn: 305.50" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500 font-mono">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1" data-i18n="notes">Notlar (İsteğe bağlı)</label>
+                    <input type="text" id="pos-notes" placeholder="Maaş birikimi, uzun vadeli vb." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="flex items-center justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeAddPositionModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs font-bold transition" data-i18n="cancel">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition" data-i18n="save">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Create Alert Modal -->
+    <div id="alert-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#111827] border border-gray-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl p-6">
+            <h3 class="text-lg font-bold text-white mb-4" data-i18n="createAlertModalTitle">Fiyat Alarmı Kur</h3>
+            <form onsubmit="submitAlertForm(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1" data-i18n="symbol">Sembol</label>
+                    <input type="text" id="alert-symbol" required placeholder="örn: BTC" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500 uppercase font-mono">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1" data-i18n="condition">Koşul</label>
+                    <select id="alert-condition" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                        <option value="ABOVE" data-i18n="above">Üstüne Çıkarsa (>=)</option>
+                        <option value="BELOW" data-i18n="below">Altına Düşerse (<=)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1" data-i18n="targetPrice">Hedef Fiyat</label>
+                    <input type="number" step="any" id="alert-price" required placeholder="örn: 68000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500 font-mono">
+                </div>
+                <div class="flex items-center justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeCreateAlertModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs font-bold transition" data-i18n="cancel">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition" data-i18n="saveAlertBtn">Alarmı Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Load App Logic -->
+    <script src="/app.js"></script>
+</body>
+</html>

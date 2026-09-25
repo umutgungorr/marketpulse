@@ -1,0 +1,77 @@
+/* MarketPulse Dark Financial Theme & Animations */
+:root {
+    --bg-dark: #0b0f19;
+    --card-bg: #111827;
+    --card-border: #1f2937;
+    --accent-blue: #3b82f6;
+    --accent-emerald: #10b981;
+    --accent-rose: #f43f5e;
+    --accent-amber: #f59e0b;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: #f3f4f6;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Glassmorphism Card */
+.glass-panel {
+    background: rgba(17, 24, 39, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Pulse animation for live indicators */
+.live-dot {
+    animation: livePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.15); }
+}
+
+/* Tab active state */
+.tab-active {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
+}
+
+/* Gradient text */
+.gradient-title {
+    background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Shimmer on card update */
+.shimmer-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.shimmer-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+}

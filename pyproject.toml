@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "marketpulse"
+version = "0.1.0"
+description = "Bilingual (TR/EN) Financial & Asset Intelligence Web App for BIST, Global Equities, and Crypto"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    { name = "Umut Gungor", email = "umutgungor.dev@gmail.com" }
+]
+keywords = ["finance", "bist", "crypto", "sentiment", "portfolio", "trading", "web-app"]
+dependencies = []
+
+[project.scripts]
+marketpulse = "marketpulse.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/marketpulse"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
