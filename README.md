@@ -1,56 +1,56 @@
 # 📊 MarketPulse (PiyasaRadarı)
 
 > **Bilingual (TR/EN) Financial & Asset Intelligence Web Platform**  
-> *Borsa İstanbul (BIST), Kripto Paralar ve Küresel Hisseler için Kesin Ayrıştırma, Piyasa Duygu Radarı ve Kişisel Portföy Takip Uygulaması.*
+> *Strict parsing, sentiment analysis, and personal portfolio tracking for Borsa Istanbul (BIST), Cryptocurrencies, and Global Stocks.*
 
 ---
 
-## 🌟 Öne Çıkan Özellikler (v0.2.0)
+## 🌟 Highlighted Features (v0.2.0)
 
-1. **🎯 Katı & Akıllı Sembol Arama (Zero-Junk Search):**
-   - Rastgele veya anlamsız aramaları filtreler; çöp sonuç üretmez.
-   - Doğrulanmış semboller bulunamadığında popüler varlık önerileri sunar.
-2. **🇹🇷 / 🇬🇧 Canlı Çift Dil Desteği (TR / EN):**
-   - Tek tıkla tüm arayüz, grafikler, metrikler ve haber duygu kartları anında Türkçe ve İngilizce arasında çevrilir.
-3. **🗂️ Hisse & Kripto Kesin Ayrıştırması:**
-   - **BIST 100:** THYAO, ASELS, EREGL, GARAN, SASA, TUPRS, KCHOL vb. (F/K, PD/DD, Temettü Verimi %, Hacim).
-   - **Kripto Paralar:** BTC, ETH, SOL, AVAX, XRP, BNB vb. (Market Cap, 24s Hacim, Katman 1/DeFi kategorileri).
-   - **Küresel (US):** AAPL, NVDA, MSFT, TSLA, AMZN (Nasdaq/NYSE liderleri).
-4. **💰 Temettü & Yıllık Pasif Gelir Radarı:**
-   - BIST hisselerinin yıllık temettü verimi (%) ve ödeme ayları.
-   - Portföy genelinde toplam tahmini yıllık temettü nakit getirisi hesabı.
-5. **🛡️ Portföy Sağlık & Risk Çeşitlendirme Skoru (0-100):**
-   - Tek varlık yoğunlaşması ve yüksek kripto volatilitesi risklerini analiz edip puan ve uyarılar üretir.
-6. **📥 1-Tıkla Excel / CSV Dışa Aktarma:**
-   - Tüm açık pozisyonları UTF-8 BOM formatında Excel ve Google E-Tablolar uyumlu CSV olarak indirme.
-7. **🧮 Kâr Realizasyonu & Satış Simülatörü:**
-   - Belirli bir fiyattan çıkış yapıldığında cebe kalacak net kârı ve kalan lot miktarını önceden hesaplama.
-8. **📰 Haber & KAP Bildirimleri Duygu Analizi (Sentiment Radar):**
-   - BIST KAP açıklamaları ve küresel finans haberlerini tarayarak **Pozitif (Bullish) / Nötr / Negatif (Bearish)** duygu puanı hesaplar. Özel KAP alt filtresi.
-9. **⏰ Fiyat Alarm Sistemi:**
-   - Belirlenen hedef fiyat aşıldığında görsel bildirim üreten yerel alarm mekanizması.
-10. **⚡ Sıfır Dış Bağımlılık (Zero External Dependencies):**
-    - Saf Python standart kütüphanesi (`http.server`, `sqlite3`, `json`) ile inşa edilmiştir. Sıfır kurulum derdi.
+1. **🎯 Strict & Smart Symbol Search (Zero-Junk Search):**
+   - Filters out random or meaningless searches; does not produce garbage results.
+   - Provides popular asset recommendations when verified symbols are not found.
+2. **🇹🇷 / 🇬🇧 Live Bilingual Support (TR / EN):**
+   - Instantly translates the entire interface, charts, metrics, and news sentiment cards between Turkish and English with a single click.
+3. **🗂️ Strict Asset Segregation (Stocks vs Crypto):**
+   - **BIST 100:** THYAO, ASELS, EREGL, GARAN, SASA, TUPRS, KCHOL etc. (P/E, P/B, Dividend Yield %, Volume).
+   - **Cryptocurrencies:** BTC, ETH, SOL, AVAX, XRP, BNB etc. (Market Cap, 24h Volume, L1/DeFi categories).
+   - **Global (US):** AAPL, NVDA, MSFT, TSLA, AMZN (Nasdaq/NYSE leaders).
+4. **💰 Dividend & Annual Passive Income Radar:**
+   - Annual dividend yields (%) and payment months for BIST stocks.
+   - Calculates the estimated total annual dividend cash return across the entire portfolio.
+5. **🛡️ Portfolio Health & Risk Diversification Score (0-100):**
+   - Analyzes single-asset concentration and high crypto volatility risks to generate scores and warnings.
+6. **📥 1-Click Excel / CSV Export:**
+   - Download all open positions in UTF-8 BOM format, fully compatible with Excel and Google Sheets.
+7. **🧮 Profit Realization & Exit Simulator:**
+   - Pre-calculates the net profit and remaining lot amount if an exit is made at a specific target price.
+8. **📰 News & KAP Disclosures Sentiment Radar:**
+   - Scans BIST KAP (Public Disclosure Platform) announcements and global financial news to calculate a **Positive (Bullish) / Neutral / Negative (Bearish)** sentiment score. Features a dedicated KAP sub-filter.
+9. **⏰ Price Alert System:**
+   - Local alert mechanism that produces visual notifications when a specified target price is breached.
+10. **⚡ Zero External Dependencies:**
+    - Built with pure Python standard library (`http.server`, `sqlite3`, `json`). Zero installation hassle.
 
 ---
 
-## 🚀 Hızlı Başlangıç (Quickstart)
+## 🚀 Quickstart
 
 ```bash
-# Depoyu klonlayın ve klasöre girin:
+# Clone the repository and enter the directory:
 git clone https://github.com/umutgungorr/marketpulse.git
 cd marketpulse
 
-# Web uygulamasını başlatın (Kurulum gerektirmez!):
+# Start the web application (No setup required!):
 python run.py
 ```
 
-Tarayıcınızda şu adresi açın:
+Open the following address in your browser:
 👉 **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
 
 ---
 
-## 🧪 Testleri Çalıştırma
+## 🧪 Running Tests
 
 ```bash
 uv run pytest tests -v
@@ -58,23 +58,23 @@ uv run pytest tests -v
 
 ---
 
-## 📡 REST API Uç Noktaları
+## 📡 REST API Endpoints
 
-| Metot | Uç Nokta | Açıklama |
+| Method | Endpoint | Description |
 |:---|:---|:---|
-| `GET` | `/api/health` | Servis sağlık durumu |
-| `GET` | `/api/indices` | Manşet piyasa endeksleri (BIST 100, BTC.D, SPX, Dolar/TL) |
-| `GET` | `/api/assets?type=bist\|crypto\|global` | Varlıkları ve anlık fiyatları listele |
-| `GET` | `/api/search?q={query}&type={category}` | Katı sembol ve şirket araması |
-| `GET` | `/api/chart/{symbol}?timeframe=1D\|1W\|1M\|1Y` | Geçmiş mum/çizgi grafik serisi |
-| `GET` | `/api/news?symbol={symbol}` | Duygu skorlu haber akışı ve KAP duyuruları |
-| `GET` | `/api/portfolio` | Portföy özeti, toplam değer ve kâr/zarar |
-| `POST` | `/api/portfolio` | Yeni pozisyon ekle (`symbol`, `quantity`, `buy_price`) |
-| `DELETE` | `/api/portfolio/{id}` | Pozisyonu sil |
-| `GET` | `/api/alerts` | Fiyat alarmlarını listele |
-| `POST` | `/api/alerts` | Fiyat alarmı oluştur (`symbol`, `target_price`, `condition`) |
+| `GET` | `/api/health` | Service health status |
+| `GET` | `/api/indices` | Headline market indices (BIST 100, BTC.D, SPX, USD/TRY) |
+| `GET` | `/api/assets?type=bist\|crypto\|global` | List assets and current prices |
+| `GET` | `/api/search?q={query}&type={category}` | Strict symbol and company search |
+| `GET` | `/api/chart/{symbol}?timeframe=1D\|1W\|1M\|1Y` | Historical candlestick/line chart series |
+| `GET` | `/api/news?symbol={symbol}` | News feed with sentiment scores and KAP announcements |
+| `GET` | `/api/portfolio` | Portfolio summary, total value, and PnL |
+| `POST` | `/api/portfolio` | Add a new position (`symbol`, `quantity`, `buy_price`) |
+| `DELETE` | `/api/portfolio/{id}` | Delete a position |
+| `GET` | `/api/alerts` | List price alerts |
+| `POST` | `/api/alerts` | Create a price alert (`symbol`, `target_price`, `condition`) |
 
 ---
 
-## 📄 Lisans
-Bu proje [MIT Lisansı](LICENSE) ile korunmaktadır.
+## 📄 License
+This project is licensed under the [MIT License](LICENSE).
