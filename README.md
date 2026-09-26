@@ -5,7 +5,7 @@
 
 ---
 
-## 🌟 Öne Çıkan Özellikler
+## 🌟 Öne Çıkan Özellikler (v0.2.0)
 
 1. **🎯 Katı & Akıllı Sembol Arama (Zero-Junk Search):**
    - Rastgele veya anlamsız aramaları filtreler; çöp sonuç üretmez.
@@ -13,17 +13,24 @@
 2. **🇹🇷 / 🇬🇧 Canlı Çift Dil Desteği (TR / EN):**
    - Tek tıkla tüm arayüz, grafikler, metrikler ve haber duygu kartları anında Türkçe ve İngilizce arasında çevrilir.
 3. **🗂️ Hisse & Kripto Kesin Ayrıştırması:**
-   - **BIST 100:** THYAO, ASELS, EREGL, GARAN, SASA, TUPRS, KCHOL vb. (F/K, PD/DD, Temettü, Hacim).
+   - **BIST 100:** THYAO, ASELS, EREGL, GARAN, SASA, TUPRS, KCHOL vb. (F/K, PD/DD, Temettü Verimi %, Hacim).
    - **Kripto Paralar:** BTC, ETH, SOL, AVAX, XRP, BNB vb. (Market Cap, 24s Hacim, Katman 1/DeFi kategorileri).
    - **Küresel (US):** AAPL, NVDA, MSFT, TSLA, AMZN (Nasdaq/NYSE liderleri).
-4. **📰 Haber & KAP Bildirimleri Duygu Analizi (Sentiment Radar):**
-   - BIST KAP açıklamaları ve küresel finans haberlerini tarayarak **Pozitif (Bullish) / Nötr / Negatif (Bearish)** duygu puanı hesaplar.
-5. **💼 Kişisel Portföy & Kâr/Zarar Takibi (SQLite):**
-   - Varlık ekleme, toplam kâr/zarar tutarı ve yüzdesi, varlık dağılımı (BIST % vs Kripto %).
-6. **⏰ Fiyat Alarm Sistemi:**
+4. **💰 Temettü & Yıllık Pasif Gelir Radarı:**
+   - BIST hisselerinin yıllık temettü verimi (%) ve ödeme ayları.
+   - Portföy genelinde toplam tahmini yıllık temettü nakit getirisi hesabı.
+5. **🛡️ Portföy Sağlık & Risk Çeşitlendirme Skoru (0-100):**
+   - Tek varlık yoğunlaşması ve yüksek kripto volatilitesi risklerini analiz edip puan ve uyarılar üretir.
+6. **📥 1-Tıkla Excel / CSV Dışa Aktarma:**
+   - Tüm açık pozisyonları UTF-8 BOM formatında Excel ve Google E-Tablolar uyumlu CSV olarak indirme.
+7. **🧮 Kâr Realizasyonu & Satış Simülatörü:**
+   - Belirli bir fiyattan çıkış yapıldığında cebe kalacak net kârı ve kalan lot miktarını önceden hesaplama.
+8. **📰 Haber & KAP Bildirimleri Duygu Analizi (Sentiment Radar):**
+   - BIST KAP açıklamaları ve küresel finans haberlerini tarayarak **Pozitif (Bullish) / Nötr / Negatif (Bearish)** duygu puanı hesaplar. Özel KAP alt filtresi.
+9. **⏰ Fiyat Alarm Sistemi:**
    - Belirlenen hedef fiyat aşıldığında görsel bildirim üreten yerel alarm mekanizması.
-7. **⚡ Sıfır Dış Bağımlılık (Zero External Dependencies):**
-   - Saf Python standart kütüphanesi (`http.server`, `sqlite3`, `json`) ile inşa edilmiştir.
+10. **⚡ Sıfır Dış Bağımlılık (Zero External Dependencies):**
+    - Saf Python standart kütüphanesi (`http.server`, `sqlite3`, `json`) ile inşa edilmiştir. Sıfır kurulum derdi.
 
 ---
 

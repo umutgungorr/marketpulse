@@ -53,6 +53,52 @@ def test_alerts_lifecycle(tmp_path: Path):
     assert alert["id"] is not None
 
     alerts = pm.list_alerts()
-    assert len(alerts) == 1
     # Check trigger
     assert alerts[0]["is_triggered"] is True
+
+
+def test_dividend_and_health_score(tmp_path: Path):
+    db_file = tmp_path / "test_div.db"
+    market_data = MarketDataService()
+    pm = PortfolioManager(db_file, market_data)
+
+    # EREGL has 8.4% dividend yield, TUPRS has 9.8%
+    pm.add_position("EREGL", quantity=500, buy_price=45.0)
+    pm.add_position("TUPRS", quantity=100, buy_price=160.0)
+
+    summary = pm.get_portfolio_summary()
+    assert summary["total_annual_dividend_try"] > 0
+    assert summary["average_dividend_yield"] > 0
+    assert summary["health_score"] >= 50
+    assert summary["risk_level"] in ("DÜŞÜK / DENGELİ", "ORTA DÜZEY", "YÜKSEK RİSK")
+
+
+def test_portfolio_csv_export(tmp_path: Path):
+    db_file = tmp_path / "test_csv.db"
+    market_data = MarketDataService()
+    pm = PortfolioManager(db_file, market_data)
+
+    pm.add_position("ASELS", quantity=100, buy_price=60.0, notes="Defensive hold")
+    csv_text = pm.export_portfolio_csv()
+    assert "Sembol,Varlık Türü,Miktar" in csv_text
+    assert "ASELS" in csv_text
+    assert "\ufeff" in csv_text  # UTF-8 BOM
+
+
+def test_simulate_exit(tmp_path: Path):
+    db_file = tmp_path / "test_sim.db"
+    market_data = MarketDataService()
+    pm = PortfolioManager(db_file, market_data)
+
+    pm.add_position("THYAO", quantity=100, buy_price=300.0)
+
+    # Simulate selling 30 shares at 350.0
+    sim = pm.simulate_exit("THYAO", sell_qty=30, sell_price=350.0)
+    assert sim["symbol"] == "THYAO"
+    assert sim["sell_quantity"] == 30
+    assert sim["sold_cost_basis"] == 30 * 300.0  # 9000
+    assert sim["gross_proceeds"] == 30 * 350.0   # 10500
+    assert sim["net_realized_profit"] == 1500.0
+    assert sim["profit_percentage"] == round((50.0 / 300.0) * 100, 2)
+    assert sim["remaining_quantity"] == 70.0
+

@@ -60,6 +60,15 @@ const I18N = {
         notes: "Notlar",
         save: "Kaydet",
         cancel: "İptal",
+        dividendYield: "Temettü Verimi",
+        annualDividendIncome: "Yıllık Tahmini Temettü",
+        portfolioHealth: "Portföy Sağlık & Risk Skoru",
+        riskLevel: "Risk Düzeyi",
+        exportCsv: "📥 Excel / CSV İndir",
+        simulateExit: "Kâr / Satış Simülatörü",
+        allNews: "Tüm Haberler",
+        kapNews: "KAP Bildirimleri",
+        cryptoNews: "Kripto & Global",
     },
     en: {
         brand: "MarketPulse",
@@ -117,6 +126,15 @@ const I18N = {
         notes: "Notes",
         save: "Save",
         cancel: "Cancel",
+        dividendYield: "Dividend Yield",
+        annualDividendIncome: "Est. Annual Dividend",
+        portfolioHealth: "Portfolio Health & Risk Score",
+        riskLevel: "Risk Level",
+        exportCsv: "📥 Export CSV / Excel",
+        simulateExit: "Sell / Exit Simulator",
+        allNews: "All News",
+        kapNews: "KAP Disclosures",
+        cryptoNews: "Crypto & Global",
     },
 };
 
@@ -509,36 +527,81 @@ async function renderPortfolioView() {
         const sign = isPos ? "+" : "";
         const color = isPos ? "text-emerald-400" : "text-rose-400";
 
+        const riskBadgeColor = data.risk_level === "DÜŞÜK / DENGELİ" 
+            ? "text-emerald-400 bg-emerald-950/60 border-emerald-800" 
+            : (data.risk_level === "ORTA DÜZEY" ? "text-amber-400 bg-amber-950/60 border-amber-800" : "text-rose-400 bg-rose-950/60 border-rose-800");
+
         main.innerHTML = `
             <div class="space-y-6">
-                <!-- Summary Metrics Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="glass-panel p-5 rounded-xl border border-gray-800">
-                        <div class="text-xs text-gray-400 font-medium mb-1">${t('totalPortfolioVal')}</div>
-                        <div class="text-2xl font-bold font-mono text-white">${formatCurrency(data.total_value_try, 'TRY')}</div>
-                        <div class="text-xs text-gray-400 font-mono mt-1">≈ ${formatCurrency(data.total_value_usd, 'USD')}</div>
+                <!-- 4 Summary Metrics Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Total Value -->
+                    <div class="glass-panel p-5 rounded-xl border border-gray-800 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs text-gray-400 font-medium mb-1">${t('totalPortfolioVal')}</div>
+                            <div class="text-2xl font-bold font-mono text-white">${formatCurrency(data.total_value_try, 'TRY')}</div>
+                        </div>
+                        <div class="text-xs text-gray-400 font-mono mt-2 pt-2 border-t border-gray-800/60">
+                            ≈ ${formatCurrency(data.total_value_usd, 'USD')}
+                        </div>
                     </div>
 
-                    <div class="glass-panel p-5 rounded-xl border border-gray-800">
-                        <div class="text-xs text-gray-400 font-medium mb-1">${t('totalProfitLoss')}</div>
-                        <div class="text-2xl font-bold font-mono ${color}">${sign}${formatCurrency(data.total_pnl_try, 'TRY')}</div>
-                        <div class="text-xs font-bold font-mono ${color} mt-1">${sign}${data.total_pnl_pct}%</div>
+                    <!-- Total PnL -->
+                    <div class="glass-panel p-5 rounded-xl border border-gray-800 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs text-gray-400 font-medium mb-1">${t('totalProfitLoss')}</div>
+                            <div class="text-2xl font-bold font-mono ${color}">${sign}${formatCurrency(data.total_pnl_try, 'TRY')}</div>
+                        </div>
+                        <div class="text-xs font-bold font-mono ${color} mt-2 pt-2 border-t border-gray-800/60">
+                            ${sign}${data.total_pnl_pct}% Toplam Getiri
+                        </div>
                     </div>
 
-                    <div class="glass-panel p-5 rounded-xl border border-gray-800">
-                        <div class="text-xs text-gray-400 font-medium mb-1">${t('assetAllocation')}</div>
-                        <div class="flex items-center space-x-3 mt-2 text-xs font-mono">
-                            <span class="text-blue-400">BIST: %${data.allocation_pct.bist || 0}</span>
-                            <span class="text-amber-400">CRYPTO: %${data.allocation_pct.crypto || 0}</span>
-                            <span class="text-purple-400">GLOBAL: %${data.allocation_pct.global || 0}</span>
+                    <!-- Dividend Income -->
+                    <div class="glass-panel p-5 rounded-xl border border-gray-800 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs text-gray-400 font-medium mb-1 flex items-center justify-between">
+                                <span>${t('annualDividendIncome')}</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold border border-emerald-800/50">PASİF GELİR</span>
+                            </div>
+                            <div class="text-2xl font-bold font-mono text-emerald-400">${formatCurrency(data.total_annual_dividend_try, 'TRY')}</div>
+                        </div>
+                        <div class="text-xs text-gray-400 font-mono mt-2 pt-2 border-t border-gray-800/60">
+                            Ort. Temettü Verimi: <strong class="text-white">%${data.average_dividend_yield}</strong>
+                        </div>
+                    </div>
+
+                    <!-- Health & Risk Score -->
+                    <div class="glass-panel p-5 rounded-xl border border-gray-800 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs text-gray-400 font-medium mb-1 flex items-center justify-between">
+                                <span>${t('portfolioHealth')}</span>
+                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded border ${riskBadgeColor}">${data.risk_level}</span>
+                            </div>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-2xl font-bold font-mono text-white">${data.health_score}</span>
+                                <span class="text-xs text-gray-400 font-mono">/ 100</span>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-400 mt-2 pt-2 border-t border-gray-800/60 truncate" title="${(data.risk_warnings || []).join(' | ') || 'Dengeli varlık dağılımı'}">
+                            ${(data.risk_warnings && data.risk_warnings[0]) ? `⚠️ ${data.risk_warnings[0]}` : '✅ Dengeli varlık dağılımı'}
                         </div>
                     </div>
                 </div>
 
                 <!-- Position List Table -->
                 <div class="glass-panel rounded-xl border border-gray-800 overflow-hidden">
-                    <div class="p-4 border-b border-gray-800 flex items-center justify-between">
-                        <h3 class="font-bold text-white text-base">${t('myPositions')} (${data.positions_count})</h3>
+                    <div class="p-4 border-b border-gray-800 flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center space-x-3">
+                            <h3 class="font-bold text-white text-base">${t('myPositions')} (${data.positions_count})</h3>
+                            <button onclick="downloadPortfolioCsv()" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1">
+                                <span>${t('exportCsv')}</span>
+                            </button>
+                            <button onclick="openSimulateModal()" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-amber-400 hover:text-amber-300 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1">
+                                <span>${t('simulateExit')}</span>
+                            </button>
+                        </div>
+
                         <button onclick="openAddPositionModal()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition">
                             ${t('addAssetBtn')}
                         </button>
@@ -556,6 +619,7 @@ async function renderPortfolioView() {
                                         <th class="p-3">${t('buyPrice')}</th>
                                         <th class="p-3">${t('currentVal')}</th>
                                         <th class="p-3">${t('pnl')}</th>
+                                        <th class="p-3">${t('dividendYield')}</th>
                                         <th class="p-3 text-right">${t('actions')}</th>
                                     </tr>
                                 </thead>
@@ -566,12 +630,19 @@ async function renderPortfolioView() {
                                         const pnlSign = pnlPos ? "+" : "";
                                         return `
                                             <tr class="hover:bg-gray-800/40">
-                                                <td class="p-3 font-bold text-white">${p.symbol}</td>
+                                                <td class="p-3 font-bold text-white flex items-center space-x-2">
+                                                    <span onclick="openChartModal('${p.symbol}')" class="cursor-pointer hover:underline text-blue-400">${p.symbol}</span>
+                                                    <span class="text-[10px] text-gray-500 uppercase">${p.asset_type}</span>
+                                                </td>
                                                 <td class="p-3">${p.quantity}</td>
                                                 <td class="p-3">${formatCurrency(p.buy_price, p.currency)}</td>
-                                                <td class="p-3">${formatCurrency(p.current_value, p.currency)}</td>
+                                                <td class="p-3 font-bold text-gray-200">${formatCurrency(p.current_value, p.currency)}</td>
                                                 <td class="p-3 ${pnlColor} font-bold">${pnlSign}${formatCurrency(p.pnl_amount, p.currency)} (${pnlSign}${p.pnl_pct}%)</td>
-                                                <td class="p-3 text-right">
+                                                <td class="p-3 text-gray-300">
+                                                    ${p.dividend_yield > 0 ? `<span class="text-emerald-400 font-bold">%${p.dividend_yield}</span> (~${formatCurrency(p.annual_dividend, p.currency)}/yıl)` : '<span class="text-gray-600">-</span>'}
+                                                </td>
+                                                <td class="p-3 text-right space-x-2">
+                                                    <button onclick="openSimulateModal('${p.symbol}')" class="text-amber-400 hover:text-amber-300 font-bold">Kâr Al</button>
                                                     <button onclick="deletePosition(${p.id})" class="text-rose-400 hover:text-rose-300 font-bold">Sil</button>
                                                 </td>
                                             </tr>
@@ -589,56 +660,94 @@ async function renderPortfolioView() {
     }
 }
 
-// News & Sentiment View
+// Download CSV
+function downloadPortfolioCsv() {
+    window.location.href = "/api/portfolio/export";
+}
+
+// News & Sentiment View with Sub-Filters (All, KAP, Crypto)
+let activeNewsCategory = "all";
+
+async function switchNewsCategory(cat) {
+    activeNewsCategory = cat;
+    renderNewsView();
+}
+
 async function renderNewsView() {
     const main = document.getElementById("content-area");
     main.innerHTML = `<div class="p-8 text-center text-gray-400 font-mono animate-pulse">Haberler taranıyor...</div>`;
 
     try {
-        const res = await fetch("/api/news");
+        const catQuery = activeNewsCategory === "all" ? "" : `?category=${activeNewsCategory}`;
+        const res = await fetch(`/api/news${catQuery}`);
         const items = await res.json();
+
+        const btnAllClass = activeNewsCategory === "all" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400 hover:text-white";
+        const btnKapClass = activeNewsCategory === "kap" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400 hover:text-white";
+        const btnCryptoClass = activeNewsCategory === "crypto" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400 hover:text-white";
 
         main.innerHTML = `
             <div class="space-y-4">
-                <div class="flex items-center justify-between mb-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
                     <h2 class="text-lg font-bold text-white">${t('latestNews')}</h2>
+
+                    <!-- Category Sub-Filters -->
+                    <div class="flex items-center space-x-1.5 text-xs font-mono">
+                        <button onclick="switchNewsCategory('all')" class="px-3 py-1 rounded-lg font-bold transition ${btnAllClass}">
+                            ${t('allNews')}
+                        </button>
+                        <button onclick="switchNewsCategory('kap')" class="px-3 py-1 rounded-lg font-bold transition flex items-center space-x-1 ${btnKapClass}">
+                            <span>🇹🇷</span>
+                            <span>${t('kapNews')}</span>
+                        </button>
+                        <button onclick="switchNewsCategory('crypto')" class="px-3 py-1 rounded-lg font-bold transition flex items-center space-x-1 ${btnCryptoClass}">
+                            <span>🪙</span>
+                            <span>${t('cryptoNews')}</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    ${items.map((n) => {
-                        const isBull = n.sentiment_label === "BULLISH";
-                        const isBear = n.sentiment_label === "BEARISH";
-                        const badgeColor = isBull 
-                            ? "bg-emerald-950/80 text-emerald-400 border-emerald-800" 
-                            : (isBear ? "bg-rose-950/80 text-rose-400 border-rose-800" : "bg-amber-950/80 text-amber-400 border-amber-800");
-                        
-                        const title = state.lang === "tr" ? n.title_tr : n.title_en;
-                        const summary = state.lang === "tr" ? n.summary_tr : n.summary_en;
+                ${items.length === 0 ? `
+                    <div class="glass-panel p-8 text-center text-gray-500 font-mono text-xs rounded-xl border border-gray-800">
+                        Bu kategoride güncel haber bulunamadı.
+                    </div>
+                ` : `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${items.map((n) => {
+                            const isBull = n.sentiment_label === "BULLISH";
+                            const isBear = n.sentiment_label === "BEARISH";
+                            const badgeColor = isBull 
+                                ? "bg-emerald-950/80 text-emerald-400 border-emerald-800" 
+                                : (isBear ? "bg-rose-950/80 text-rose-400 border-rose-800" : "bg-amber-950/80 text-amber-400 border-amber-800");
+                            
+                            const title = state.lang === "tr" ? n.title_tr : n.title_en;
+                            const summary = state.lang === "tr" ? n.summary_tr : n.summary_en;
 
-                        return `
-                            <div class="glass-panel p-5 rounded-xl border border-gray-800 flex flex-col justify-between shimmer-card">
-                                <div>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${badgeColor}">
-                                            ${n.sentiment_label} (${n.sentiment_score > 0 ? '+' : ''}${n.sentiment_score})
-                                        </span>
-                                        <span class="text-xs text-gray-500 font-mono">${n.published_at}</span>
+                            return `
+                                <div class="glass-panel p-5 rounded-xl border border-gray-800 flex flex-col justify-between shimmer-card">
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${badgeColor}">
+                                                ${n.sentiment_label} (${n.sentiment_score > 0 ? '+' : ''}${n.sentiment_score})
+                                            </span>
+                                            <span class="text-xs text-gray-500 font-mono">${n.published_at}</span>
+                                        </div>
+                                        <h4 class="font-bold text-white text-sm leading-snug mb-2">${title}</h4>
+                                        <p class="text-xs text-gray-400 leading-relaxed">${summary}</p>
                                     </div>
-                                    <h4 class="font-bold text-white text-sm leading-snug mb-2">${title}</h4>
-                                    <p class="text-xs text-gray-400 leading-relaxed">${summary}</p>
-                                </div>
-                                <div class="mt-4 pt-3 border-t border-gray-800 flex items-center justify-between text-[11px] text-gray-400">
-                                    <span>${t('source')}: <strong class="text-gray-300">${n.source}</strong></span>
-                                    <div class="flex space-x-1.5">
-                                        ${n.related_symbols.map((s) => `
-                                            <span onclick="openChartModal('${s}')" class="cursor-pointer font-mono font-bold text-blue-400 hover:underline">#${s}</span>
-                                        `).join("")}
+                                    <div class="mt-4 pt-3 border-t border-gray-800 flex items-center justify-between text-[11px] text-gray-400">
+                                        <span>${t('source')}: <strong class="text-gray-300">${n.source}</strong></span>
+                                        <div class="flex space-x-1.5">
+                                            ${n.related_symbols.map((s) => `
+                                                <span onclick="openChartModal('${s}')" class="cursor-pointer font-mono font-bold text-blue-400 hover:underline">#${s}</span>
+                                            `).join("")}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        `;
-                    }).join("")}
-                </div>
+                            `;
+                        }).join("")}
+                    </div>
+                `}
             </div>
         `;
     } catch (e) {
@@ -838,6 +947,66 @@ async function deleteAlert(id) {
         renderAlertsView();
     } catch (e) {
         alert("Silme hatası: " + e);
+    }
+// Modals: Simulate Exit
+function openSimulateModal(prefillSymbol = "") {
+    const modal = document.getElementById("simulate-modal");
+    if (modal) modal.classList.remove("hidden");
+    const symInput = document.getElementById("sim-symbol");
+    if (symInput && prefillSymbol) symInput.value = prefillSymbol;
+    const box = document.getElementById("sim-result-box");
+    if (box) box.classList.add("hidden");
+}
+
+function closeSimulateModal() {
+    const modal = document.getElementById("simulate-modal");
+    if (modal) modal.classList.add("hidden");
+}
+
+async function submitSimulateForm(e) {
+    e.preventDefault();
+    const symbol = document.getElementById("sim-symbol").value;
+    const qty = parseFloat(document.getElementById("sim-qty").value);
+    const price = parseFloat(document.getElementById("sim-price").value);
+    const box = document.getElementById("sim-result-box");
+
+    try {
+        const res = await fetch("/api/portfolio/simulate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ symbol, sell_quantity: qty, sell_price: price }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            alert("Hata: " + data.error);
+            return;
+        }
+
+        const isPos = data.net_realized_profit >= 0;
+        const color = isPos ? "text-emerald-400" : "text-rose-400";
+        const sign = isPos ? "+" : "";
+
+        box.classList.remove("hidden");
+        box.innerHTML = `
+            <div class="flex justify-between border-b border-gray-800 pb-1.5">
+                <span class="text-gray-400">Ortalama Alış Maliyeti:</span>
+                <span class="text-white font-bold">${formatCurrency(data.average_buy_price, data.currency)}</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-800 pb-1.5">
+                <span class="text-gray-400">Toplam Brüt Tahsilat:</span>
+                <span class="text-white font-bold">${formatCurrency(data.gross_proceeds, data.currency)}</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-800 pb-1.5">
+                <span class="text-gray-400">Net Realize Kâr:</span>
+                <span class="${color} font-bold text-sm">${sign}${formatCurrency(data.net_realized_profit, data.currency)} (${sign}${data.profit_percentage}%)</span>
+            </div>
+            <div class="flex justify-between pt-1">
+                <span class="text-gray-400">Elinizde Kalan Lot:</span>
+                <span class="text-gray-200 font-bold">${data.remaining_quantity}</span>
+            </div>
+        `;
+    } catch (e) {
+        alert("Simülasyon hatası: " + e);
     }
 }
 

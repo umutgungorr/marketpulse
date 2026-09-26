@@ -65,6 +65,7 @@ class PortfolioManager:
         positions = []
         total_cost_try = 0.0
         total_current_try = 0.0
+        total_annual_dividend_try = 0.0
 
         allocation_by_type = {"bist": 0.0, "crypto": 0.0, "global": 0.0}
 
@@ -77,6 +78,8 @@ class PortfolioManager:
 
             quote = self.market_data.get_quote(sym)
             current_p = quote.current_price if quote else buy_p
+            asset = self.registry.get_by_symbol(sym)
+            div_yield = asset.dividend_yield if asset else 0.0
 
             cost = qty * buy_p
             curr_val = qty * current_p
@@ -87,6 +90,11 @@ class PortfolioManager:
             multiplier = USD_TRY_RATE if curr == "USD" else 1.0
             cost_try = cost * multiplier
             curr_val_try = curr_val * multiplier
+
+            # Dividend calculation
+            annual_div = curr_val * (div_yield / 100.0)
+            annual_div_try = annual_div * multiplier
+            total_annual_dividend_try += annual_div_try
 
             total_cost_try += cost_try
             total_current_try += curr_val_try
@@ -106,6 +114,8 @@ class PortfolioManager:
                 "current_value": round(curr_val, 2),
                 "pnl_amount": round(pnl_amount, 2),
                 "pnl_pct": round(pnl_pct, 2),
+                "dividend_yield": div_yield,
+                "annual_dividend": round(annual_div, 2),
                 "added_at": row["added_at"],
                 "notes": row["notes"],
             })
@@ -118,15 +128,112 @@ class PortfolioManager:
         for k, v in allocation_by_type.items():
             allocation_pct[k] = round((v / total_current_try * 100), 1) if total_current_try > 0 else 0.0
 
+        # --- PORTFOLIO HEALTH & RISK SCORE (0-100) ---
+        base_score = 100
+        warnings = []
+
+        if len(positions) == 0:
+            health_score = 0
+            risk_level = "NEUTRAL"
+        else:
+            # 1. Single asset concentration penalty
+            for p in positions:
+                val_try = p["current_value"] * (USD_TRY_RATE if p["currency"] == "USD" else 1.0)
+                pct_of_total = (val_try / total_current_try * 100) if total_current_try > 0 else 0
+                if pct_of_total > 45:
+                    base_score -= 20
+                    warnings.append(f"Yüksek Yoğunlaşma: {p['symbol']} portföyün %{round(pct_of_total, 1)}'ini oluşturuyor.")
+                    break
+
+            # 2. Crypto volatility risk
+            crypto_pct = allocation_pct.get("crypto", 0)
+            if crypto_pct > 60:
+                base_score -= 20
+                warnings.append(f"Yüksek Volatilite: Portföyün %{crypto_pct}'si kripto varlıklarda.")
+
+            # 3. Diversification breadth
+            if len(positions) == 1:
+                base_score -= 20
+                warnings.append("Tek Varlık Riski: Portföyde sadece 1 adet pozisyon var.")
+            elif len(positions) >= 4:
+                base_score = min(100, base_score + 5)
+
+            health_score = max(20, min(100, base_score))
+            if health_score >= 80:
+                risk_level = "DÜŞÜK / DENGELİ"
+            elif health_score >= 55:
+                risk_level = "ORTA DÜZEY"
+            else:
+                risk_level = "YÜKSEK RİSK"
+
+        avg_dividend_yield = (total_annual_dividend_try / total_current_try * 100) if total_current_try > 0 else 0.0
+
         return {
             "total_value_try": round(total_current_try, 2),
             "total_value_usd": round(total_current_try / USD_TRY_RATE, 2),
             "total_cost_try": round(total_cost_try, 2),
             "total_pnl_try": round(total_pnl_try, 2),
             "total_pnl_pct": round(total_pnl_pct, 2),
+            "total_annual_dividend_try": round(total_annual_dividend_try, 2),
+            "average_dividend_yield": round(avg_dividend_yield, 2),
+            "health_score": health_score,
+            "risk_level": risk_level,
+            "risk_warnings": warnings,
             "positions_count": len(positions),
             "allocation_pct": allocation_pct,
             "positions": positions,
+        }
+
+    def export_portfolio_csv(self) -> str:
+        """Generates UTF-8 encoded CSV string of open portfolio positions."""
+        summary = self.get_portfolio_summary()
+        lines = [
+            "Sembol,Varlık Türü,Miktar,Alış Fiyatı,Güncel Fiyat,Para Birimi,Maliyet,Güncel Değer,Kâr/Zarar (Tutar),Kâr/Zarar (%),Temettü Verimi (%),Yıllık Temettü,Kayıt Tarihi,Notlar"
+        ]
+        for p in summary["positions"]:
+            line = (
+                f"{p['symbol']},{p['asset_type']},{p['quantity']},{p['buy_price']},"
+                f"{p['current_price']},{p['currency']},{p['cost_basis']},{p['current_value']},"
+                f"{p['pnl_amount']},{p['pnl_pct']}%,%{p.get('dividend_yield', 0)},"
+                f"{p.get('annual_dividend', 0)},{p['added_at']},\"{p.get('notes', '')}\""
+            )
+            lines.append(line)
+        return "\ufeff" + "\n".join(lines)  # Prepend BOM for Excel compatibility
+
+    def simulate_exit(self, symbol: str, sell_qty: float, sell_price: float) -> dict[str, Any]:
+        """Calculates realized profit and tax/net return for a planned partial or full exit."""
+        sym = symbol.strip().upper()
+        summary = self.get_portfolio_summary()
+        matching = [p for p in summary["positions"] if p["symbol"] == sym]
+        if not matching:
+            raise ValueError(f"Portföyünüzde {sym} bulunmuyor.")
+
+        total_held = sum(p["quantity"] for p in matching)
+        if sell_qty > total_held:
+            raise ValueError(f"Yetersiz bakiye! Elinizde {total_held} adet var, {sell_qty} satamazsınız.")
+
+        # Weighted average buy price
+        total_cost = sum(p["quantity"] * p["buy_price"] for p in matching)
+        avg_buy_price = total_cost / total_held if total_held > 0 else 0.0
+
+        sold_cost_basis = sell_qty * avg_buy_price
+        gross_proceeds = sell_qty * sell_price
+        net_profit = gross_proceeds - sold_cost_basis
+        profit_pct = (net_profit / sold_cost_basis * 100) if sold_cost_basis > 0 else 0.0
+
+        currency = matching[0]["currency"]
+
+        return {
+            "symbol": sym,
+            "sell_quantity": sell_qty,
+            "sell_price": sell_price,
+            "average_buy_price": round(avg_buy_price, 2),
+            "sold_cost_basis": round(sold_cost_basis, 2),
+            "gross_proceeds": round(gross_proceeds, 2),
+            "net_realized_profit": round(net_profit, 2),
+            "profit_percentage": round(profit_pct, 2),
+            "remaining_quantity": round(total_held - sell_qty, 4),
+            "currency": currency,
         }
 
     # --- WATCHLIST OPERATIONS ---

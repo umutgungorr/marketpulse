@@ -130,9 +130,12 @@ class SentimentEngine:
         items: list[NewsItem] = []
 
         sym_filter = symbol.strip().upper() if symbol else None
+        cat_filter = category.strip().lower() if category else None
 
         for raw in CURATED_NEWS_FEED:
             if sym_filter and sym_filter not in raw["related_symbols"]:
+                continue
+            if cat_filter and cat_filter not in raw["category"].lower():
                 continue
 
             pub_time = now - timedelta(minutes=raw["published_minutes_ago"])

@@ -107,8 +107,19 @@ class MarketPulseHandler(SimpleHTTPRequestHandler):
 
             elif path == "/api/news":
                 symbol = query.get("symbol", [None])[0]
-                news = self.sentiment_engine.get_news(symbol)
+                category = query.get("category", [None])[0]
+                news = self.sentiment_engine.get_news(symbol, category)
                 self._send_json(news)
+
+            elif path == "/api/portfolio/export":
+                csv_data = self.portfolio_mgr.export_portfolio_csv().encode("utf-8")
+                self.send_response(HTTPStatus.OK)
+                self.send_header("Content-Type", "text/csv; charset=utf-8")
+                self.send_header("Content-Disposition", "attachment; filename=marketpulse_portfolio.csv")
+                self.send_header("Content-Length", str(len(csv_data)))
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(csv_data)
 
             elif path == "/api/portfolio":
                 summary = self.portfolio_mgr.get_portfolio_summary()
@@ -144,6 +155,13 @@ class MarketPulseHandler(SimpleHTTPRequestHandler):
 
                 pos = self.portfolio_mgr.add_position(symbol, quantity, buy_price, notes)
                 self._send_json(pos, status=HTTPStatus.CREATED)
+
+            elif path == "/api/portfolio/simulate":
+                symbol = body.get("symbol")
+                sell_qty = float(body.get("sell_quantity", 0))
+                sell_price = float(body.get("sell_price", 0))
+                res = self.portfolio_mgr.simulate_exit(symbol, sell_qty, sell_price)
+                self._send_json(res)
 
             elif path == "/api/watchlist/toggle":
                 symbol = body.get("symbol", "")

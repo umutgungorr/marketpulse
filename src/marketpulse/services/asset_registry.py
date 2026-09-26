@@ -13,6 +13,8 @@ ASSET_DATABASE: list[Asset] = [
         exchange="BIST",
         description_tr="Türkiye'nin bayrak taşıyıcı ulusal havayolu şirketi. Global uçuş ağı ve kargo operasyonları.",
         description_en="Flag carrier airline of Turkey with an expansive international flight and cargo network.",
+        dividend_yield=0.0,
+        payout_month="-",
     ),
     Asset(
         symbol="ASELS",
@@ -23,6 +25,8 @@ ASSET_DATABASE: list[Asset] = [
         exchange="BIST",
         description_tr="Elektronik, radar, aviyonik ve elektro-optik sistemler geliştiren lider savunma teknolojisi şirketi.",
         description_en="Premier defense electronics contractor specializing in communication, radar, and electronic warfare systems.",
+        dividend_yield=1.8,
+        payout_month="Kasım / Nov",
     ),
     Asset(
         symbol="EREGL",
@@ -33,6 +37,8 @@ ASSET_DATABASE: list[Asset] = [
         exchange="BIST",
         description_tr="Türkiye'nin en büyük yassı çelik üreticisi, entegre demir-çelik sanayi devi.",
         description_en="Turkey's largest flat steel producer and integrated industrial steel conglomerate.",
+        dividend_yield=8.4,
+        payout_month="Mart / Mar",
     ),
     Asset(
         symbol="GARAN",
@@ -43,6 +49,8 @@ ASSET_DATABASE: list[Asset] = [
         exchange="BIST",
         description_tr="Türkiye'nin en büyük özel mevduat ve dijital bankacılık kuruluşlarından biri.",
         description_en="One of Turkey's leading private banking and digital financial services institutions.",
+        dividend_yield=3.5,
+        payout_month="Nisan / Apr",
     ),
     Asset(
         symbol="SASA",
@@ -53,6 +61,8 @@ ASSET_DATABASE: list[Asset] = [
         exchange="BIST",
         description_tr="Polyester elyaf, filament iplik ve polimer bazlı özel kimyasal ürünler üreticisi.",
         description_en="Major manufacturer of polyester fiber, filament yarn, and specialty polymer products.",
+        dividend_yield=0.0,
+        payout_month="-",
     ),
     Asset(
         symbol="TUPRS",
@@ -63,6 +73,8 @@ ASSET_DATABASE: list[Asset] = [
         exchange="BIST",
         description_tr="Türkiye'nin en büyük sanayi kuruluşu ve 4 rafinerisiyle tek petrol rafine edicisi.",
         description_en="Turkey's largest industrial enterprise and primary petroleum refiner operating 4 domestic refineries.",
+        dividend_yield=9.8,
+        payout_month="Eylül / Sep",
     ),
     Asset(
         symbol="KCHOL",
@@ -73,6 +85,8 @@ ASSET_DATABASE: list[Asset] = [
         exchange="BIST",
         description_tr="Enerji, otomotiv, tüketim malları ve finans sektörlerinde faaliyet gösteren en büyük holding.",
         description_en="Turkey's largest industrial and commercial conglomerate spanning energy, automotive, finance, and consumer goods.",
+        dividend_yield=4.2,
+        payout_month="Nisan / Apr",
     ),
     Asset(
         symbol="BIMAS",
@@ -83,6 +97,8 @@ ASSET_DATABASE: list[Asset] = [
         exchange="BIST",
         description_tr="Türkiye genelinde yaygın indirim marketleri zinciri ve gıda perakendecisi.",
         description_en="Leading hard-discount supermarket chain with thousands of stores across Turkey.",
+        dividend_yield=3.8,
+        payout_month="Mayıs / May",
     ),
     Asset(
         symbol="AKBNK",
@@ -93,6 +109,8 @@ ASSET_DATABASE: list[Asset] = [
         exchange="BIST",
         description_tr="Geniş şube ağı ve yenilikçi mobil bankacılık hizmetleriyle önde gelen ticari banka.",
         description_en="Prominent commercial bank providing retail, commercial, and investment banking services.",
+        dividend_yield=3.9,
+        payout_month="Nisan / Apr",
     ),
     Asset(
         symbol="SISE",
@@ -103,6 +121,8 @@ ASSET_DATABASE: list[Asset] = [
         exchange="BIST",
         description_tr="Düzcam, cam ev eşyası, cam ambalaj ve soda kimyasallarında küresel pazar lideri.",
         description_en="Global manufacturer of flat glass, glassware, glass packaging, and soda ash chemicals.",
+        dividend_yield=2.9,
+        payout_month="Mayıs / May",
     ),
 
     # --- KRİPTO PARALAR (CRYPTO) ---

@@ -27,6 +27,8 @@ class Asset:
     description_tr: str
     description_en: str
     exchange: str = ""
+    dividend_yield: float = 0.0  # Percentage (e.g. 7.5%)
+    payout_month: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -38,6 +40,8 @@ class Asset:
             "exchange": self.exchange,
             "description_tr": self.description_tr,
             "description_en": self.description_en,
+            "dividend_yield": self.dividend_yield,
+            "payout_month": self.payout_month,
         }
 
 

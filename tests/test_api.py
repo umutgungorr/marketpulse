@@ -98,3 +98,44 @@ def test_api_portfolio_post_and_get(running_server):
         summary = json.loads(resp.read().decode())
         assert summary["positions_count"] >= 1
         assert summary["total_value_try"] > 0
+        assert "health_score" in summary
+        assert "total_annual_dividend_try" in summary
+
+
+def test_api_portfolio_export_csv(running_server):
+    with urllib.request.urlopen(f"{running_server}/api/portfolio/export") as resp:
+        assert resp.status == 200
+        assert "text/csv" in resp.headers.get("Content-Type")
+        content = resp.read().decode("utf-8")
+        assert "Sembol" in content
+        assert "ASELS" in content
+
+
+def test_api_portfolio_simulate(running_server):
+    req_data = json.dumps({
+        "symbol": "ASELS",
+        "sell_quantity": 20,
+        "sell_price": 75.0,
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        f"{running_server}/api/portfolio/simulate",
+        data=req_data,
+        headers={"Content-Type": "application/json"},
+        method="POST"
+    )
+    with urllib.request.urlopen(req) as resp:
+        assert resp.status == 200
+        res = json.loads(resp.read().decode())
+        assert res["symbol"] == "ASELS"
+        assert res["net_realized_profit"] > 0
+
+
+def test_api_news_category_filter(running_server):
+    # KAP category
+    with urllib.request.urlopen(f"{running_server}/api/news?category=kap") as resp:
+        assert resp.status == 200
+        news = json.loads(resp.read().decode())
+        assert len(news) >= 1
+        assert all("kap" in n["category"].lower() for n in news)
+
